@@ -1,0 +1,536 @@
+<style>
+  .schedule-container {
+    margin-top: 25px;
+    margin-left: 15px;
+  }
+</style>
+
+<div class="schedule-container">
+  <div class="title-container">
+    <h1 class="title-text">PTTEP Operation Plan Management</h1>
+  </div>
+  <div
+    class="property-section property-customization"
+    style="margin-bottom: -10px;"
+  >
+    <div class="property-panel-section">
+      <form class="event-search" id="form-search">
+        <p
+          class="property-panel-header header-customization"
+          style="width: 100%"
+        >
+          Search by specific event fields
+        </p>
+        <div class="row align-items-start gx-2 mb-2">
+          <div class="col">
+            <input
+              #taskName
+              type="text"
+              class="form-control form-control-sm"
+              name="Name"
+              id="Name"
+              placeholder="Task Name"
+            />
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #rigName
+              name="RigName"
+              id="RigName"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Operating Unit
+              </option>
+              <option *ngFor="let item of rigNameList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #asset
+              name="Asset"
+              id="Asset"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Asset
+              </option>
+              <option *ngFor="let item of assetList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #funnelName
+              name="FunnelName"
+              id="FunnelName"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                FunnelName
+              </option>
+              <option *ngFor="let item of funnelList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #projectType
+              name="ProjectType"
+              id="ProjectType"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Project Type
+              </option>
+              <option *ngFor="let item of projectTypeList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #wellType
+              name="WellType"
+              id="WellType"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Well Type
+              </option>
+              <option *ngFor="let item of wellTypeList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #contract
+              name="Contract"
+              id="Contract"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Contract
+              </option>
+              <option *ngFor="let item of contractList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <select
+              class="form-select form-select-sm"
+              aria-label="Default select example"
+              #depth
+              name="Depth"
+              id="Depth"
+            >
+              <option selected disabled class="select-placeholder" value="">
+                Depth
+              </option>
+              <option *ngFor="let item of depthList" [value]="item">
+                {{ item }}
+              </option>
+            </select>
+          </div>
+          <div class="col">
+            <ejs-datepicker
+              #startTime
+              id="StartTime"
+              class="e-start-time"
+              [showClearButton]="false"
+              name="StartTime"
+              placeholder="Start Time"
+            ></ejs-datepicker>
+          </div>
+          <div class="col">
+            <ejs-datepicker
+              #endTime
+              id="EndTime"
+              class="e-end-time"
+              [showClearButton]="false"
+              name="EndTime"
+              placeholder="End Time"
+            ></ejs-datepicker>
+          </div>
+        </div>
+        <div class="row align-items-start mb-2">
+          <div class="col-10 d-flex align-items-start mb-2">
+            <button
+              class="btn btn-light btn-sm"
+              style="margin-right: 10px; border: solid 0.5px black;"
+              id="seperateSearch"
+              type="button"
+              (click)="searchOnClick()"
+            >
+              Search
+            </button>
+            <button
+              class="btn btn-light btn-sm"
+              style="margin-right: 10px; border: solid 0.5px black;"
+              id="clear"
+              type="button"
+              (click)="clearOnClick()"
+            >
+              Clear
+            </button>
+            <button
+              class="btn btn-light btn-sm"
+              style="margin-right: 10px; border: solid 0.5px black;"
+              id="calWellCount"
+              type="button"
+              [disabled]="this.matchedSearchResult.length === 0"
+              (click)="calWellNumOnClick()"
+            >
+              Calcualte Well Count
+            </button>
+            <p
+              *ngIf="
+                this.matchedSearchResult.length > 0 &&
+                this.mathedTotalWellCount !== null
+              "
+              style="font-size: 14px; margin-top: 5px;"
+            >
+              Total Well Count: {{ this.mathedTotalWellCount }}
+            </p>
+          </div>
+          <div class="col d-flex align-items-start justify-content-end mb-2">
+            <p style="font-size: 14px; margin-top: 5px;">Search in Grid View</p>
+            <ejs-switch
+              id="checkedSwitch"
+              [checked]="true"
+              (change)="onSwitchChange($event)"
+              style="margin-top: 8px; margin-left: 12px"
+            ></ejs-switch>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <ejs-grid
+    *ngIf="showSearchResult"
+    id="grid"
+    [dataSource]="matchedSearchResult"
+    allowPaging="true"
+    allowSorting="true"
+    showColumnMenu="true"
+    allowFiltering="true"
+    [filterSettings]="filterSettings"
+    gridLines="Both"
+  >
+    <e-columns>
+      <e-column
+        field="RigName"
+        headerText="Operating Unit"
+        width="50"
+      ></e-column>
+      <e-column field="Name" headerText="Name" width="50"></e-column>
+      <e-column field="Asset" headerText="Asset" width="30"></e-column>
+      <e-column field="FunnelName" headerText="Funnel" width="30"></e-column>
+      <e-column
+        field="ProjectType"
+        headerText="Project Type"
+        width="50"
+      ></e-column>
+      <e-column field="WellType" headerText="Well Type" width="50"></e-column>
+      <e-column field="Depth" headerText="Depth" width="30"></e-column>
+      <e-column
+        field="NoOfWell"
+        headerText="Number of Well"
+        width="40"
+      ></e-column>
+      <e-column
+        field="StartTime"
+        headerText="StartTime"
+        width="50"
+        format="yyyy/M/d"
+      ></e-column>
+      <e-column
+        field="EndTime"
+        headerText="EndTime"
+        width="50"
+        format="yyyy/M/d"
+      ></e-column>
+    </e-columns>
+  </ejs-grid>
+  <ejs-schedule
+    *ngIf="!showSearchResult"
+    id="schedule"
+    #scheduleObj
+    cssClass="schedule-excel-export"
+    width="100%"
+    height="720px"
+    [(selectedDate)]="selectedDate"
+    [timeScale]="false"
+    [workHours]="workHours"
+    [monthsCount]="84"
+    [eventSettings]="eventSettings"
+    [showQuickInfo]="showQuickInfo"
+    [group]="group"
+    [allowResizing]="false"
+    [(currentView)]="currentView"
+    (dataBound)="onDatabound($event)"
+    (actionBegin)="onActionBegin($event)"
+    (created)="scheduleCreated()"
+    (drag)="onItemDrag($event)"
+    (dragStop)="onItemDragStop($event)"
+    (popupOpen)="onPopupOpen($event)"
+    (eventRendered)="onEventRendered($event)"
+    (popupClose)="onPopupClose($event)"
+    [rowAutoHeight]="rowAutoHeight"
+  >
+    >
+    <ng-template #eventSettingsTooltipTemplate let-data>
+      <div class="tooltip-wrap">
+        <div class="content-area">
+          <div class="name">{{ data.Name }}</div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #editorTemplate>
+      <form id="form-element" class="form-vertical">
+        <table class="custom-event-editor" width="100%" cellpadding="10">
+          <thead>
+            <tr>
+              <th colspan="10" class="topic-text">Project Info</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="e-textlabel" colspan="2">Name</td>
+              <td colspan="8">
+                <input
+                  id="Name"
+                  class="e-field e-input"
+                  placeholder="*Project Name (not allow duplicate)"
+                  floatLabelType="Auto"
+                  type="text"
+                  name="Name"
+                  style="width: 100%"
+                />
+                <span class="name-validation" id="name-validation"></span>
+              </td>
+            </tr>
+            <tr id="projectPropertyRow">
+              <td class="e-textlabel" colspan="2">Number of Wells</td>
+              <td colspan="2">
+                <input
+                  type="number"
+                  id="NoOfWell"
+                  name="NoOfWell"
+                  class="e-field e-input"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+              <td class="e-textlabel" colspan="1">Asset</td>
+              <td colspan="1">
+                <input
+                  id="Asset"
+                  type="text"
+                  class="e-field e-input"
+                  name="Asset"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+              <td class="e-textlabel" colspan="1">Funnel</td>
+              <td colspan="1">
+                <input
+                  type="text"
+                  id="FunnelName"
+                  name="FunnelName"
+                  class="e-field e-input"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10">
+                <input
+                  id="RigId"
+                  type="hidden"
+                  class="e-field e-input"
+                  name="RigId"
+                  style="width: 100%"
+                />
+                <input
+                  id="Id"
+                  type="hidden"
+                  class="e-field e-input"
+                  name="Id"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="e-textlabel" colspan="2">Rig</td>
+              <td colspan="2">
+                <input
+                  id="RigName"
+                  type="text"
+                  class="e-field e-input"
+                  name="RigName"
+                  style="width: 100%"
+                />
+              </td>
+              <td class="e-textlabel" colspan="2">Depth</td>
+              <td colspan="2">
+                <input
+                  id="Depth"
+                  type="text"
+                  class="e-field e-input"
+                  name="Depth"
+                  style="width: 100%"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="e-textlabel" colspan="2">Start Date</td>
+              <td colspan="8">
+                <input
+                  id="StartTime"
+                  type="text"
+                  class="e-field"
+                  name="StartTime"
+                  style="width: 100%"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="e-textlabel" colspan="2">End Date</td>
+              <td colspan="8">
+                <input
+                  id="EndTime"
+                  type="text"
+                  class="e-field"
+                  name="EndTime"
+                  style="width: 100%"
+                />
+              </td>
+            </tr>
+            <tr id="projectDateDurationRow">
+              <td class="e-textlabel" colspan="2">Duration(Days)</td>
+              <td colspan="2">
+                <input
+                  id="TotalDuration"
+                  type="number"
+                  class="e-field e-input"
+                  name="TotalDuration"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+              <td class="e-textlabel" colspan="2">Project Type</td>
+              <td colspan="2">
+                <input
+                  id="ProjectType"
+                  type="text"
+                  class="e-field e-input"
+                  name="ProjectType"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+            </tr>
+            <tr>
+              <td class="e-textlabel" colspan="2">Well Type</td>
+              <td colspan="2">
+                <input
+                  id="WellType"
+                  type="text"
+                  class="e-field e-input"
+                  name="WellType"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+              <td class="e-textlabel" colspan="2">BHST</td>
+              <td colspan="2">
+                <input
+                  id="BHST"
+                  type="text"
+                  class="e-field e-input"
+                  name="BHST"
+                  style="width: 100%"
+                  readonly
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="10">
+                <div class="control-section">
+                  <div class="dual-list-wrapper">
+                    <div class="dual-list-groupa">
+                      <h4 style="font-size: 15px; font-weight: bolder;">
+                        Suggested WBS List
+                      </h4>
+                      <ejs-listbox
+                        [dataSource]="dataA"
+                        [toolbarSettings]="toolbarSettings"
+                        height="330px"
+                        scope="#connected-list"
+                        [fields]="fields"
+                        [noRecordsTemplate]="noRecordsTemplate"
+                      ></ejs-listbox>
+                    </div>
+                    <div class="dual-list-groupb">
+                      <h4 style="font-size: 15px; font-weight: bolder;">
+                        Selected WBS Name
+                      </h4>
+                      <ejs-listbox
+                        id="connected-list"
+                        [dataSource]="dataB"
+                        height="330px"
+                        [fields]="fields"
+                        [noRecordsTemplate]="noRecordsTemplate"
+                      ></ejs-listbox>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </ng-template>
+    <e-resources>
+      <e-resource
+        field="RigId"
+        title="Rig"
+        name="Rigs"
+        [dataSource]="rigDataSource"
+        [allowMultiple]="allowMultiple"
+        textField="Text"
+        idField="Id"
+        groupIDField="GroupId"
+        colorField="Color"
+      >
+      </e-resource>
+    </e-resources>
+    <e-views>
+      <e-view option="TimelineYear" displayName="Timeline Year"></e-view>
+      <e-view
+        option="TimelineMonth"
+        displayName="Timeline Month"
+        interval="48"
+      ></e-view>
+    </e-views>
+    <e-header-rows>
+      <e-header-row option="Year"></e-header-row>
+      <e-header-row option="Month"></e-header-row>
+    </e-header-rows>
+  </ejs-schedule>
+</div>
+<div id="grid"></div>
